@@ -4,6 +4,7 @@ import { AddCircleOutline as AddIcon, RemoveCircleOutline as RemoveIcon } from "
 import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
 import PropTypes from "prop-types";
 import React from "react";
+import { Draggable, Container as DraggableContainer } from "react-smooth-dnd";
 
 import Context from "./context";
 import Field from "./Field";
@@ -12,7 +13,6 @@ import Value from "./Value";
 
 const removeIconStyles = (t) => ({
     removeButton: {
-        marginLeft: t.spacing(-1),
         marginRight: t.spacing(-1),
         marginTop: t.spacing(0.75),
     },
@@ -24,6 +24,13 @@ const removeIconStyles = (t) => ({
 const useRuleStyles = makeStyles((t) => {
     return {
         ...removeIconStyles(t),
+        container: {
+            "& > div": {
+                marginBottom: t.spacing(0.5),
+                marginTop: t.spacing(0.5),
+            },
+            "cursor": "move",
+        },
         valueGridItem: {
             flex: "auto",
         },
@@ -44,7 +51,7 @@ const Rule = (props) => {
     return combinator ? (
         <RuleGroup combinator={combinator} id={id} level={level + 1} rules={rules} />
     ) : (
-        <Grid container data-testid={`rule-${testId}`} spacing={2}>
+        <Grid container className={classes.container} data-testid={`rule-${testId}`} spacing={2}>
             <Grid item>
                 <IconButton
                     className={classes.removeButton}
@@ -177,11 +184,21 @@ const RuleGroup = (props) => {
                     )}
                 </Grid>
             </Grid>
-            {rules.map((rule, position) => (
-                <Grid key={rule.id} item>
-                    <Rule id={rule.id} level={level} position={position} rule={rule} />
+            {rules?.length > 0 && (
+                <Grid item>
+                    <DraggableContainer
+                        onDrop={({ addedIndex, removedIndex }) => {
+                            dispatch({ type: "move-rule", addedIndex, id, removedIndex });
+                        }}
+                    >
+                        {rules.map((rule, position) => (
+                            <Draggable key={rule.id}>
+                                <Rule id={rule.id} level={level} position={position} rule={rule} />
+                            </Draggable>
+                        ))}
+                    </DraggableContainer>
                 </Grid>
-            ))}
+            )}
         </Grid>
     ) : (
         <span />

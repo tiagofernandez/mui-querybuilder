@@ -1,3 +1,4 @@
+import arrayMove from "array-move";
 import { dequal } from "dequal";
 import PropTypes from "prop-types";
 import React from "react";
@@ -338,6 +339,12 @@ function reducer(state, action) {
         case "add-rule": {
             const group = findNodeById(action.id, query);
             group.rules.push(emptyRule());
+            return query;
+        }
+        case "move-rule": {
+            const { addedIndex, id, removedIndex } = action;
+            const group = findNodeById(id, query);
+            group.rules = arrayMove(group.rules, removedIndex, addedIndex);
             return query;
         }
         case "remove-node": {

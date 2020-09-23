@@ -264,10 +264,10 @@ export function isRuleValid(rule) {
     const { value } = rule;
 
     if (Array.isArray(value)) {
-        return value && value.length > 0;
+        return value?.length > 0;
     }
     if (/string/.test(typeof value)) {
-        return Boolean(value && value.trim());
+        return Boolean(value?.trim());
     }
     return value !== null && value !== undefined;
 }

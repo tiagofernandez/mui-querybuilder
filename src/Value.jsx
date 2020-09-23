@@ -91,7 +91,7 @@ const Value = React.memo(
                         renderInput={(params) => <TextField {...params} />}
                         size="small"
                         style={{ paddingTop: 4, width: "auto" }}
-                        value={filter.options.filter((op) => value && value.includes(op.value))}
+                        value={filter.options.filter((op) => value?.includes(op.value))}
                         onChange={(event, selected) => {
                             const value = (selected || []).map((item) => item.value);
                             dispatch({ type: "set-value", id, value });

@@ -20,6 +20,7 @@
     },
     "source": "src/index.js",
     "main": "dist/index.js",
+    "module": "dist/index.modern.js",
     "files": [
         "/dist"
     ],
@@ -47,7 +48,7 @@
         "build-storybook": "rm -rf docs/ & build-storybook --docs -o docs/",
         "format": "prettier --write src/",
         "lint": "eslint \"src/**/*.{js,ts}*\" --quiet --fix",
-        "postbuild": "cp dist/index.modern.js dist/index.js && cp dist/index.modern.js.map dist/index.js.map",
+        "postbuild": "cp dist/index.modern.js dist/index.js",
         "storybook": "onchange 'src/**' -- prettier --write --ignore-unknown {{changed}} & start-storybook -p 6006",
         "test": "jest"
     },

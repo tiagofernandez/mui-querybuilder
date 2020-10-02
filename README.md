@@ -20,8 +20,7 @@ yarn add --exact mui-querybuilder \
     @material-ui/lab \
     @material-ui/pickers \
     date-fns \
-    prop-types \
-    react-is
+    prop-types
 ```
 
 ## Usage

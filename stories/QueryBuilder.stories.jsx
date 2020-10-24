@@ -331,24 +331,31 @@ storiesOf("MuiQueryBuilder")
                         disabled={loaded}
                         variant="outlined"
                         onClick={() => {
-                            const updatedFilters = [...filters];
-                             [
-                                { label: "January", value: 1 },
-                                { label: "February", value: 2 },
-                                { label: "March", value: 3 },
-                                { label: "April", value: 4 },
-                                { label: "May", value: 5 },
-                                { label: "June", value: 6 },
-                                { label: "July", value: 7 },
-                                { label: "August", value: 8 },
-                                { label: "September", value: 9 },
-                                { label: "October", value: 10 },
-                                { label: "November", value: 11 },
-                                { label: "December", value: 12 },
-                            ].forEach(month => {
-                                updatedFilters[0].options[0].options.push(month);
-                            });
-                            setFilters(updatedFilters);
+                            setFilters([
+                                {
+                                    options: [
+                                        {
+                                            label: "Months",
+                                            type: "multiselect",
+                                            value: "months",
+                                            options: [
+                                                { label: "January", value: 1 },
+                                                { label: "February", value: 2 },
+                                                { label: "March", value: 3 },
+                                                { label: "April", value: 4 },
+                                                { label: "May", value: 5 },
+                                                { label: "June", value: 6 },
+                                                { label: "July", value: 7 },
+                                                { label: "August", value: 8 },
+                                                { label: "September", value: 9 },
+                                                { label: "October", value: 10 },
+                                                { label: "November", value: 11 },
+                                                { label: "December", value: 12 },
+                                            ],
+                                        },
+                                    ],
+                                },
+                            ]);
                             setLoaded(true);
                         }}
                     >

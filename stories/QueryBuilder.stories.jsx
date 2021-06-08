@@ -117,12 +117,12 @@ storiesOf("MuiQueryBuilder")
                 {
                     field: "word_count",
                     operator: "less",
-                    value: 420,
+                    value: "420",
                 },
                 {
                     field: "rating",
                     operator: "greater",
-                    value: 4.2,
+                    value: "4.2",
                 },
                 {
                     combinator: "or",

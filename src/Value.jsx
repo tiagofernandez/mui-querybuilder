@@ -43,6 +43,9 @@ const Value = React.memo(
             const customOperator = customOperators[filter.type];
             filter.type = customOperator?.type;
         }
+        const handleTextFieldChange = (event) => {
+            dispatch({ type: "set-value", id, value: event.target.value });
+        };
         switch (filter.type) {
             case "date":
                 return (
@@ -60,16 +63,11 @@ const Value = React.memo(
                 return (
                     <TextField
                         data-testid={testId}
+                        type="number"
                         value={readNumericValue(value)}
-                        onChange={(event) => {
-                            const inputValue = event.target.value;
-                            const newValue = inputValue.length > 0 ? Number(inputValue) : null;
-                            if (newValue !== value) {
-                                dispatch({ type: "set-value", id, value: newValue });
-                            }
-                        }}
+                        onChange={handleTextFieldChange}
                         onKeyPress={(event) => {
-                            if (/\D/.test(event.key)) {
+                            if (/\.|,/.test(event.key)) {
                                 event.preventDefault();
                             }
                         }}
@@ -102,14 +100,9 @@ const Value = React.memo(
                 return (
                     <TextField
                         data-testid={testId}
+                        type="number"
                         value={readNumericValue(value)}
-                        onChange={(event) => {
-                            const { value: val } = event.target;
-                            const v = val.replace(/[^.\d]|^0+/g, "").replace(/^(\d*\.?)|(\d*)\.?/g, "$1$2") || null;
-                            if (v !== value) {
-                                dispatch({ type: "set-value", id, value: v });
-                            }
-                        }}
+                        onChange={handleTextFieldChange}
                     />
                 );
             case "radio":
@@ -181,15 +174,7 @@ const Value = React.memo(
                 );
             default:
                 return (
-                    <TextField
-                        fullWidth
-                        data-testid={testId}
-                        value={value || ""}
-                        onChange={(event) => {
-                            const { value } = event.target;
-                            dispatch({ type: "set-value", id, value });
-                        }}
-                    />
+                    <TextField fullWidth data-testid={testId} value={value || ""} onChange={handleTextFieldChange} />
                 );
         }
     },

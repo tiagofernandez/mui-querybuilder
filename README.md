@@ -1,142 +1,168 @@
-# MUI-QueryBuilder
+# MUI QueryBuilder
 
-Query builder for [React](https://reactjs.org/) applications based on [Material-UI](https://github.com/mui-org/material-ui).
-Check the [Storybook](http://tiagofernandez.com/mui-querybuilder/)!
+A query builder component for [Material UI](https://mui.com/) and [React](https://react.dev/).
 
-[![npm package](https://img.shields.io/npm/v/mui-querybuilder/latest.svg)](https://www.npmjs.com/package/mui-querybuilder)
-[![npm downloads](https://img.shields.io/npm/dm/mui-querybuilder.svg)](https://www.npmjs.com/package/mui-querybuilder)
+[![npm version](https://img.shields.io/npm/v/mui-querybuilder.svg)](https://www.npmjs.com/package/mui-querybuilder)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-<img src="https://github.com/tiagofernandez/mui-querybuilder/blob/main/images/mui-querybuilder.png?raw=true">
+![MUI QueryBuilder](images/mui-querybuilder.png)
+
+## Features
+
+- 🧩 Nested rule groups with configurable depth
+- 🔀 Drag & drop rule reordering (powered by [dnd-kit](https://dndkit.com/))
+- 📅 Built-in date picker support via [MUI X Date Pickers](https://mui.com/x/react-date-pickers/)
+- 🎨 Fully themed via MUI's `ThemeProvider`
+- ✅ Query validation API
+- 🔧 Custom operators and filter types
 
 ## Installation
 
-MUI-QueryBuilder is available as an [npm package](https://www.npmjs.com/package/mui-querybuilder).
-
-```sh
-yarn add --exact mui-querybuilder \
-    @date-io/core@1.x \
-    @date-io/date-fns@1.x \
-    @material-ui/core \
-    @material-ui/icons \
-    @material-ui/lab \
-    @material-ui/pickers \
-    date-fns \
-    prop-types
+```bash
+npm install mui-querybuilder
 ```
+
+### Peer Dependencies
+
+This library requires the following peer dependencies:
+
+```bash
+npm install react react-dom @mui/material @mui/icons-material @mui/x-date-pickers @emotion/react @emotion/styled date-fns
+```
+
+| Package | Version |
+|---|---|
+| `react` | ≥ 19.0.0 |
+| `react-dom` | ≥ 19.0.0 |
+| `@mui/material` | ≥ 7.0.0 |
+| `@mui/icons-material` | ≥ 7.0.0 |
+| `@mui/x-date-pickers` | ≥ 8.0.0 |
+| `@emotion/react` | ≥ 11.0.0 |
+| `@emotion/styled` | ≥ 11.0.0 |
+| `date-fns` | ≥ 3.0.0 |
 
 ## Usage
 
-Here is a quick example to get you started:
-
-```jsx
-import MuiQueryBuilder from "mui-querybuilder";
-
-import React, { useState } from "react";
-import ReactDOM from "react-dom";
+```tsx
+import QueryBuilder from "mui-querybuilder";
 
 const filters = [
     {
         label: "Article",
         options: [
-            {
-                label: "Title",
-                value: "title",
-                type: "text",
-            },
-            {
-                label: "URL",
-                value: "url",
-                type: "text",
-            },
+            { label: "Title", value: "title", type: "text" },
+            { label: "Word Count", value: "word_count", type: "integer" },
+            { label: "Published", value: "published", type: "switch" },
+            { label: "Updated Date", value: "updated_date", type: "date" },
         ],
     },
 ];
 
 function App() {
-    const [query, setQuery] = useState({
-        combinator: "and",
-        rules: [
-            {
-                field: "title",
-                operator: "contains",
-                value: "France",
-            },
-        ],
-    });
     return (
-        <MuiQueryBuilder
+        <QueryBuilder
             filters={filters}
-            query={query}
+            query={{
+                combinator: "and",
+                rules: [
+                    { field: "title", operator: "contains", value: "React" },
+                ],
+            }}
             onChange={(query, valid) => {
-                setQuery(query);
+                console.log("Query:", query, "Valid:", valid);
             }}
         />
     );
 }
-
-ReactDOM.render(<App />, document.querySelector('#app'));
 ```
-
-### Examples
-
-Check out some examples in [here](http://tiagofernandez.com/mui-querybuilder/)!
 
 ## API
 
-### Types
+### Props
 
-* `date`: renders a date picker, date only.
-* `integer`: renders a text field that only accepts numbers.
-* `number`: renders a text field that only accepts fractional numbers.
-* `multiselect`: renders an autocomplete input for multiple items.
-* `radio`: renders radio buttons with `true` and `false` values.
-* `select`: renders an autocomplete input for a single item.
-* `switch`: renders an on/off switch input.
-* `text`: renders a text field.
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `filters` | `Filter[]` | `[]` | Filter definitions grouped by category |
+| `operators` | `OperatorDef[]` | Built-in operators | Override the default operator set |
+| `customOperators` | `Record<string, CustomOperator>` | `{}` | Custom operator types |
+| `query` | `Query` | — | Initial query state |
+| `maxLevels` | `number` | `1` | Maximum nesting depth for rule groups |
+| `sortFilters` | `boolean` | `true` | Alphabetically sort filters within groups |
+| `debug` | `boolean` | `false` | Show debug output (formatted JSON + validity) |
+| `onChange` | `(query: Query, valid: boolean) => void` | — | Callback fired on query changes |
 
-### Filters
+### Static Methods
 
-The filters object is a list of grouped objects with `label` (string) and `options` (list) properties.
-Each option is an object with `label` (string), `value` (string), and `type` (string).
-The `label` can be anything, but the `value` must be an unique key, used by each field in a ruleset.
-In case an option's `type` is `select` or `multiselect`, it will require a nested `options` (list) property with `label` & `value` items.
+```tsx
+// Format a query by removing internal IDs
+QueryBuilder.formatQuery(query);
 
-### Operators
+// Validate a query (all rules have field, operator, and value)
+QueryBuilder.isQueryValid(query);
 
-In order to relate operators to their corresponding types, we rely on [this data structure](https://github.com/tiagofernandez/mui-querybuilder/blob/master/src/operators.js).
-Each operator must have a `label` (string), unique `value` (string), and the `types` (list) it supports.
+// Access the default operators
+QueryBuilder.operators;
+```
 
-### Query
+### Supported Value Types
 
-The query object is a recursive data structure composed of `combinator` (string) and `rules` (list) properties.
-Each rule is an object with `field` (string), `operator` (string), and `value` (anything, depending on the field's `type`).
-In case the rule contains a `combinator` property, it's considered a nested group.
+| Type | Component | Description |
+|---|---|---|
+| `text` | `TextField` | Free-text input |
+| `integer` | `TextField (number)` | Integer input (no decimals) |
+| `number` | `TextField (number)` | Numeric input |
+| `date` | `DatePicker` | Date selection via MUI X |
+| `select` | `Autocomplete` | Single-value dropdown |
+| `multiselect` | `Autocomplete (multiple)` | Multi-value dropdown |
+| `radio` | `Radio` | True/False radio buttons |
+| `switch` | `Switch` | On/Off toggle |
 
-### Properties
+### Built-in Operators
 
-|Property|Type|Default|Description
-|-|-|-|-|
-|**customOperators**|object|`{}`|Additional operators to be used by the query builder.
-|**debug**|bool|`false`|Dev mode helper that renders the generated query directly in the screen.
-|**filters**|array|`[]`|The filters the query builder framework will rely to create rules.
-|**maxLevels**|number|`1`|The max nesting level, with `0` meaning no nesting at all.
-|**operators**|array|`[...operators]`|The operators to be used, in case you want to change or translate [the default ones](https://github.com/tiagofernandez/mui-querybuilder/blob/master/src/operators.js).
-|**onChange**|func|`null`|Function `(query: object, valid: bool) => void` with the current query and its validity (`true` if all rules have `values`).
-|**query**|object|`{ combinator: "and", rules: [{ field: null, operator: null, value: null }] }`|The initial query to be rendered.
-|**sortFilters**|bool|`true`|Option to disable sorting filters within their groups.
+| Operator | Applicable Types |
+|---|---|
+| `equal`, `not_equal` | All except multiselect |
+| `contains`, `not_contains` | text |
+| `less`, `greater`, `less_equal`, `greater_equal` | number, integer |
+| `before`, `after`, `before_equal`, `after_equal` | date |
+| `in`, `not_in` | multiselect |
+| `null`, `not_null` | All types |
 
-### Utility functions
+## Development
 
-```js
-import MuiQueryBuilder from "mui-querybuilder";
+```bash
+# Install dependencies
+npm install
 
-// Formats a query by deleting IDs from all nodes.
-const formattedQuery = MuiQueryBuilder.formatQuery(query);
+# Start Storybook (development)
+npm run dev
 
-// Verifies if a query is valid, i.e. all rules and nested groups are filled.
-const valid = MuiQueryBuilder.isQueryValid(query);
+# Run tests
+npm test
+
+# Run tests with coverage
+npm run test:coverage
+
+# Build the library
+npm run build
+
+# Lint & format
+npm run check
+
+# Build Storybook
+npm run build-storybook
+```
+
+## Storybook
+
+Live examples are available on [GitHub Pages](https://tiagofernandez.github.io/mui-querybuilder/).
+
+To run Storybook locally:
+
+```bash
+npm run dev
 ```
 
 ## License
 
-This project is licensed under the terms of the [MIT license](/LICENSE).
+[MIT](LICENSE) © Tiago Fernandez

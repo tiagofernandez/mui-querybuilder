@@ -1,20 +1,19 @@
 {
-    "checkJs": false,
     "compilerOptions": {
+        "target": "ES2022",
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "jsx": "react-jsx",
         "esModuleInterop": true,
-        "jsx": "preserve",
-        "module": "ES2020",
-        "moduleResolution": "node",
+        "strict": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "declaration": true,
+        "declarationDir": "./dist",
         "sourceMap": true,
-        "target": "ES2020"
+        "outDir": "./dist",
+        "lib": ["ES2022", "DOM", "DOM.Iterable"]
     },
-    "ecmaFeatures": {
-        "jsx": true
-    },
-    "ecmaVersion": 2020,
-    "exclude": [
-        "node_modules",
-        "**/node_modules/*"
-    ],
-    "sourceType": "module"
+    "include": ["src"],
+    "exclude": ["node_modules", "dist", "tests", "stories"]
 }

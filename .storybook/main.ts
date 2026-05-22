@@ -10,6 +10,15 @@ const config: StorybookConfig = {
     docs: {
         autodocs: true,
     },
+    async viteFinal(config) {
+        config.plugins = config.plugins?.filter((plugin) => {
+            if (plugin && typeof plugin === "object" && "name" in plugin) {
+                return plugin.name !== "vite:dts";
+            }
+            return true;
+        });
+        return config;
+    },
 };
 
 export default config;

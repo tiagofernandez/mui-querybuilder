@@ -163,6 +163,84 @@ To run Storybook locally:
 npm run dev
 ```
 
+## Releasing to npm
+
+To release and publish a new version of the library to npm, follow these steps:
+
+### 1. Bump the Version Locally
+
+Ensure you are on the `main` branch and your working directory is clean, then run `npm version` with `patch`, `minor`, or `major` depending on the scope of the updates. This will bump the version in `package.json` / `package-lock.json` and automatically create a git commit and tag:
+
+```bash
+# Verify local state is clean
+git status
+
+# Bump the version (e.g. from 2.0.0 to 2.0.1)
+npm version patch
+```
+
+---
+
+### Option A: Automated via GitHub Actions (Recommended)
+
+This project is configured with a GitHub Actions workflow ([publish.yml](.github/workflows/publish.yml)) to securely publish package updates to npm automatically using **Trusted Publishing (OIDC)**. Since this is already configured on npmjs.com for your repository, **no GitHub secrets or `NPM_TOKEN` are required** to publish from GitHub.
+
+1. **Push the commit and tag to GitHub**:
+   ```bash
+   git push && git push --tags
+   ```
+
+2. **Publish the Release**:
+   - Go to the GitHub repository **Releases** tab.
+   - Draft a new release, select the tag you just pushed, and publish the release.
+   - The workflow will trigger, run tests and checks, build the library, and upload the build to the npm registry with provenance automatically.
+
+
+---
+
+### Option B: Manual/Local Publish
+
+If you prefer to publish manually from your local machine:
+
+1. **Push changes to GitHub**:
+   ```bash
+   git push && git push --tags
+   ```
+
+2. **Authenticate with npm**:
+   Log in to your npm account with write permissions for the package:
+   ```bash
+   npm login
+   ```
+
+3. **Publish the package**:
+   Publish the package to the registry. The configured `prepublishOnly` lifecycle hook will automatically run the code style checks (`npm run check`), run the test suite (`npm test`), and compile the library files (`npm run build`) before uploading:
+   ```bash
+   npm publish
+   ```
+
+---
+
+### Troubleshooting: Two-Factor Authentication (2FA) 403 Forbidden
+
+If your npm account or the package has Two-Factor Authentication (2FA) enabled, running `npm publish` locally might fail with an `E403 403 Forbidden` error:
+
+```
+npm ERR! code E403
+npm ERR! 403 403 Forbidden - PUT https://registry.npmjs.com/mui-querybuilder - Two-factor authentication or granular access token with bypass 2fa enabled is required to publish packages.
+```
+
+To resolve this:
+- **Interactive Publish**: Run `npm publish`. npm will prompt you in the terminal to enter the One-Time Password (OTP) from your authenticator app.
+- **Explicit OTP flag**: If the terminal prompt does not appear, pass your authenticator app's OTP directly using the `--otp` flag:
+  ```bash
+  npm publish --otp=123456
+  ```
+- **Trusted Publishing (OIDC)**: For automated CI/CD environments (like GitHub Actions), use npm **Trusted Publishing** (OIDC) which requires no static secrets or manual tokens. This is already configured for this repository.
+- **Granular Tokens**: If publishing via a custom CI script or CLI without OIDC, generate a **Publish Token** with bypass 2FA enabled from your npm dashboard, set it in your environment (e.g. `NPM_TOKEN`), and configure your `.npmrc` accordingly. Granular tokens are recommended over classic tokens for enhanced security.
+
+
+
 ## License
 
 [MIT](LICENSE) © Tiago Fernandez

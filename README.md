@@ -186,14 +186,20 @@ npm version patch
 This project is configured with a GitHub Actions workflow ([publish.yml](.github/workflows/publish.yml)) to securely publish package updates to npm automatically using **Trusted Publishing (OIDC)**. Since this is already configured on npmjs.com for your repository, **no GitHub secrets or `NPM_TOKEN` are required** to publish from GitHub.
 
 1. **Push the commit and tag to GitHub**:
+   Ensure you run `git push --tags` to upload the newly generated version tag:
    ```bash
    git push && git push --tags
    ```
 
-2. **Publish the Release**:
-   - Go to the GitHub repository **Releases** tab.
-   - Draft a new release, select the tag you just pushed, and publish the release.
-   - The workflow will trigger, run tests and checks, build the library, and upload the build to the npm registry with provenance automatically.
+2. **Publish the Release on GitHub**:
+   - Go to your GitHub repository page and click on **Releases** (in the right-hand sidebar).
+   - Click the **Draft a new release** button.
+   - Click the **Choose a tag** dropdown menu.
+   - **Select the tag** you just pushed (e.g., `v2.0.1`). *Do not leave this field blank or use a tag that hasn't been pushed.*
+   - Fill in the **Release title** (e.g., `v2.0.1`) and write your release notes.
+   - Click the **Publish release** button.
+   - The workflow will automatically trigger, run tests and formatting checks, build the package, and upload it to the npm registry with provenance.
+
 
 
 ---
